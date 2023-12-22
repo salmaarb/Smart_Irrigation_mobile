@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "939347031306",
+    "project_id": "irrigationsystem-e1275",
+    "storage_bucket": "irrigationsystem-e1275.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:939347031306:android:995880a4b677da91e076f3",
+        "android_client_info": {
+          "package_name": "ma.projet.arrosageintellegentv2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIqCJbk-UTFK1jIy1VFNnr-9B2ymsUUrI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
