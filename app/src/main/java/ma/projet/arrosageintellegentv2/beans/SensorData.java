@@ -17,6 +17,11 @@ public class SensorData {
     @SerializedName("date")
     private Date date;
 
+    public SensorData(double temperature, double humidity) {
+        this.temperature = temperature;
+        this.humidity = humidity;
+    }
+
     // Ajoutez les getters et les setters
     public long getId() {
         return id;
