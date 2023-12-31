@@ -27,10 +27,8 @@ public class HomeViewModel extends ViewModel {
         temperatureData = new MutableLiveData<>();
         humidityData = new MutableLiveData<>();
 
-        // Initialize the executor service
         executorService = Executors.newSingleThreadScheduledExecutor();
 
-        // Call your API to get initial data
         fetchDataTemperature();
         fetchDataHumidity();
     }
@@ -59,6 +57,8 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onResponse(Call<List<SensorData>> call, Response<List<SensorData>> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    System.out.println("sss");
+                    System.out.println(temperatureData);
                     temperatureData.setValue(response.body());
                 } else {
                     // Handle errors
@@ -95,9 +95,9 @@ public class HomeViewModel extends ViewModel {
 
     public void startRealTimeUpdates() {
         // Schedule a periodic update for temperature
-        executorService.scheduleAtFixedRate(this::fetchDataTemperature, 0, 20, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(this::fetchDataTemperature, 0, 10, TimeUnit.SECONDS);
 
         // Schedule a periodic update for humidity
-        executorService.scheduleAtFixedRate(this::fetchDataHumidity, 0, 20, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(this::fetchDataHumidity, 0, 10, TimeUnit.SECONDS);
     }
 }

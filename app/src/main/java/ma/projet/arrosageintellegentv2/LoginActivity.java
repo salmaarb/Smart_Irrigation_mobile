@@ -26,10 +26,14 @@ import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ma.projet.arrosageintellegentv2.R;
+import ma.projet.arrosageintellegentv2.beans.AppUser;
+import ma.projet.arrosageintellegentv2.beans.EspaceVert;
 import ma.projet.arrosageintellegentv2.beans.LoginResponse;
+import ma.projet.arrosageintellegentv2.beans.reponse;
 import ma.projet.arrosageintellegentv2.networking.ApiClient;
 import ma.projet.arrosageintellegentv2.networking.ApiInterface;
 import okhttp3.ResponseBody;
@@ -37,6 +41,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import com.google.gson.Gson;
 import com.onesignal.Continue;
 import com.onesignal.OneSignal;
 import com.onesignal.debug.LogLevel;
@@ -46,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText password;
     private Button button;
     public static SharedPreferences sharedPreferences;
+    public static SharedPreferences sharedPreferences1;
   //  public static SharedPreferences sharref;
 
     @Override
@@ -105,60 +111,59 @@ public class LoginActivity extends AppCompatActivity {
                 notificationChannel.enableVibration(true);
                 notificationManager.createNotificationChannel(notificationChannel);
             }
-
-
         }
-
 notificationManager.notify(0,builder.build());
-
-
-
     }
-
     private void login() {
         String usernameStr = username.getText().toString();
         String passwordStr = password.getText().toString();
-
         // Create a Map for the login data
         Map<String, String> loginData = new HashMap<>();
         loginData.put("username", usernameStr);
         loginData.put("password", passwordStr);
-System.out.println(loginData);
+        System.out.println(loginData);
         System.out.println(passwordStr);
         // Make a POST request to the "/login" endpoint
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
         Call<ResponseBody> loginResponseCall = apiInterface.Authentifcate(loginData);
-
         loginResponseCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
+                    // reponse loginResponse = response.body();
                     try {
-                        // Convert the response body to a String
                         String responseBodyString = response.body().string();
-
-                        // Handle the successful login response
-                        SharedPreferences.Editor myEditor = sharedPreferences.edit();
-                        myEditor.putString("login_data",responseBodyString);
-                        myEditor.apply();
-System.out.println(response.body());
-                        System.out.println("ss"+responseBodyString);
-                        Log.i("login_data", responseBodyString);
-
-                        Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_LONG).show();
-
-                        Intent intent = new Intent(LoginActivity.this, StatisticActivity.class);
-                        startActivity(intent);
+                        Gson gson = new Gson();
+                        reponse loginResponse = gson.fromJson(responseBodyString, reponse.class);
+                        System.out.println(loginResponse);
+                        if (loginResponse != null) {
+                            // Extraire la liste des espaces verts
+                            List<EspaceVert> espacesVerts = loginResponse.getEspacesVerts();
+                            System.out.println(espacesVerts);
+                            if (espacesVerts != null && !espacesVerts.isEmpty()) {
+                                // Imprimer ou traiter la liste des espaces verts selon vos besoins
+                                for (EspaceVert espaceVert : espacesVerts) {
+                                    System.out.println("Espace Vert: " + espaceVert.getLibelle());
+                                }
+                            } else {
+                                System.out.println("Liste des espaces verts est vide ou nulle.");
+                            }
+                            // Reste du code pour sauvegarder d'autres informations ou effectuer d'autres actions
+                            System.out.println(responseBodyString);
+                            SharedPreferences.Editor myEditor = sharedPreferences.edit();
+                            myEditor.putString("login_data", responseBodyString);
+                            myEditor.apply();
+                            Log.i("login_data", responseBodyString);
+                            Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(LoginActivity.this, StatisticActivity.class);
+                            startActivity(intent);
+                        }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
-                } else {
-                    // Handle the case where login failed
-                    String errorBody = response.errorBody() != null ? response.errorBody().toString() : "Unknown error";
-                    Log.e("LoginActivity", "Login Failed: " + errorBody);
-                    Toast.makeText(LoginActivity.this, "Login Failed: " + errorBody, Toast.LENGTH_LONG).show();
                 }
             }
+
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {

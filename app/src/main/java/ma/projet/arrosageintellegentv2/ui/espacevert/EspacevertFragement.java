@@ -41,25 +41,19 @@ public class EspacevertFragement extends Fragment {
 
         binding = FragmentEspacevertBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        String loginData = sp.getString("login_data", "");
-        try {
-            // Supposez que loginData est au format JSON, ajustez-le en fonction de votre structure
-            JSONObject userData = new JSONObject(loginData);
+      //  String loginData = sp.getString("login_data", "");
 
-            // Récupérez les informations nécessaires du JSON
-
-            String name = userData.getString("username");
-
-        } catch (JSONException e) {
-            Log.e(TAG, "Error parsing login data JSON", e);
-        }
 
 
         // instantiate ViewModel
         EspacevertViewModel mEspacevertViewModel = new ViewModelProvider(this).get(EspacevertViewModel.class);
 
         // reception initial les données
-        mEspacevertViewModel.init();
+        try {
+            mEspacevertViewModel.init();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
 
         // instantiate the adapter
         EspaceVertAdapter adapter = new EspaceVertAdapter((StatisticActivity) getActivity());

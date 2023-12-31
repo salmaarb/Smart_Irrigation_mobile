@@ -32,6 +32,9 @@ public class Zone implements Serializable {
                 '}';
     }
 
+    public Zone() {
+    }
+
     public String getLibelle() {
         return libelle;
     }

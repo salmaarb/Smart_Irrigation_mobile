@@ -6,6 +6,9 @@ public class Plantage {
     private int nombre;
     private Plante plante;
 
+    public Plantage() {
+    }
+
     public Plantage(int id, String date, int nombre, Plante plante) {
         this.id = id;
         this.date = date;

@@ -11,7 +11,7 @@ public class SensorData {
     @SerializedName("temperature")
     private double temperature;
 
-    @SerializedName("humidite")
+    @SerializedName("humidity")
     private double humidity;
 
     @SerializedName("date")

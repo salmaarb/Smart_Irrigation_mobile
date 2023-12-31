@@ -67,24 +67,51 @@ public class ProfileFragment extends Fragment {
             // Supposez que loginData est au format JSON, ajustez-le en fonction de votre structure
             JSONObject userData = new JSONObject(loginData);
 
-            // Récupérez les informations nécessaires du JSON
-            String id = userData.getString("id");
-            String name = userData.getString("username");
-            String role = userData.getString("role");
-            String address = userData.optString("address", ""); // Utilisez optString pour gérer les valeurs null
-            String phone = userData.optString("phone", ""); // Utilisez optString pour gérer les valeurs null
+            // Récupérez les informations nécessaires du JSON  String id = userData.getString("id");
+            //            String name = userData.getString("username");
+            //            String role = userData.getString("role");
+            //            String address = userData.optString("address", ""); // Utilisez optString pour gérer les valeurs null
+            //            String phone = userData.optString("phone", ""); // Utilisez optString pour gérer les valeurs null
 
-            // Affichez les informations dans les champs correspondants
-            txt_id.setText(id);
-            txt_name.setText(name);
-            txt_role.setText(role);
-            txt_address.setText(address);
-            txt_phone.setText(phone);
-        } catch (JSONException e) {
-            Log.e(TAG, "Error parsing login data JSON", e);
+            if (userData.has("user")) {
+                JSONObject userObject = userData.getJSONObject("user");
+
+                if (userObject.has("id")) {
+                    String id = userObject.getString("id");
+                    txt_id.setText(id);
+
+                }
+
+                if (userObject.has("username")) {
+                    String name = userObject.getString("username");
+                    txt_name.setText(name);
+
+                }
+
+                if (userObject.has("role")) {
+                    String role = userObject.getString("role");
+
+                    txt_role.setText(role);
+                }
+
+                if (userObject.has("address")) {
+                    String address = userObject.getString("address");
+                    txt_address.setText(address);
+
+                }
+
+                if (userObject.has("phone")) {
+                    String phone = userObject.getString("phone");  txt_phone.setText(phone);
+
+                }
+
+                // Affichez les informations dans les champs correspondants
+
         }
 
         return view;
-    }
+    } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
 
-}
+    }}

@@ -11,6 +11,9 @@ public class Plante {
         return id;
     }
 
+    public Plante() {
+    }
+
     @Override
     public String toString() {
         return "Plante{" +

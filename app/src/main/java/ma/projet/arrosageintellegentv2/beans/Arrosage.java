@@ -15,6 +15,9 @@ public class Arrosage {
         this.id = id;
     }
 
+    public Arrosage() {
+    }
+
     @Override
     public String toString() {
         return "Arrosage{" +

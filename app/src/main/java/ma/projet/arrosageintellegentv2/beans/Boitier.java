@@ -6,6 +6,9 @@ public class Boitier {
     private String type;
     private String code;
 
+    public Boitier() {
+    }
+
     public long getId() {
         return id;
     }

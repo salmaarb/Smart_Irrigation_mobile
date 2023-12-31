@@ -1,9 +1,12 @@
 package ma.projet.arrosageintellegentv2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -47,7 +50,20 @@ public class StatisticActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_statistic);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        navigationView.getMenu().findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // Implement your logout logic here
+                // For example, you can clear the user session
 
+                // Start the LoginActivity (replace LoginActivity.class with the actual name of your login activity)
+                Intent intent = new Intent(StatisticActivity.this, LoginActivity.class);
+                startActivity(intent);
+
+                finish(); // Close the current activity after starting the login activity
+                return true;
+            }
+        });
 
 
 

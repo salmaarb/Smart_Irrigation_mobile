@@ -17,17 +17,19 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import ma.projet.arrosageintellegentv2.R;
 import ma.projet.arrosageintellegentv2.beans.SensorData;
 import ma.projet.arrosageintellegentv2.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
+
     private FragmentHomeBinding binding;
     private HomeViewModel homeViewModel;
 
@@ -36,120 +38,105 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // Initialiser le ViewModel
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
+        // Observer les changements dans les données de température
         homeViewModel.getTemperatureData().observe(getViewLifecycleOwner(), new Observer<List<SensorData>>() {
             @Override
             public void onChanged(List<SensorData> sensorData) {
-                updateGraph(binding.graphTemperature, generateRandomSensorData(sensorData.size()));
+                // Mettre à jour le graphique de température avec les nouvelles données
+                updateGraph(binding.graphTemperature, sensorData);
             }
         });
 
+        // Observer les changements dans les données d'humidité
         homeViewModel.getHumidityData().observe(getViewLifecycleOwner(), new Observer<List<SensorData>>() {
             @Override
             public void onChanged(List<SensorData> sensorData) {
-                updateGraph1(binding.graphHumidity, generateRandomSensorData(sensorData.size()));
+                // Mettre à jour le graphique d'humidité avec les nouvelles données
+                updateGraph1(binding.graphHumidity, sensorData);
             }
         });
 
         return root;
     }
-
     @Override
     public void onResume() {
         super.onResume();
+        // Commencer les mises à jour en temps réel lorsque le fragment est visible
         homeViewModel.startRealTimeUpdates();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        // Arrêter les mises à jour en temps réel lorsque le fragment n'est pas visible
         homeViewModel.stopRealTimeUpdates();
     }
-
-    private List<SensorData> generateRandomSensorData(int count) {
-        List<SensorData> randomData = new ArrayList<>();
-        Random random = new Random();
-
-        for (int i = 0; i < count; i++) {
-            double randomTemperature = 20 + (random.nextDouble() * 10);
-            double randomHumidity = 40 + (random.nextDouble() * 20);
-
-            SensorData randomSensorData = new SensorData(randomTemperature, randomHumidity);
-            randomData.add(randomSensorData);
-        }
-
-        return randomData;
-    }
-
     private void updateGraph(GraphView graph, List<SensorData> sensorData) {
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
         for (int i = 0; i < sensorData.size(); i++) {
-            SensorData measure = sensorData.get(i);
-            series.appendData(new DataPoint(i, measure.getTemperature()), true, sensorData.size());
-        }
+            SensorData mesure = sensorData.get(i);
+            // Utilisez l'indice ou le temps comme X, et la température ou l'humidité comme Y
+            series.appendData(new DataPoint(i, mesure.getTemperature()), true, sensorData.size());
 
+        }
         series.setColor(Color.RED);
+
+        // Effacer les séries existantes et ajouter la nouvelle série
         graph.removeAllSeries();
         graph.addSeries(series);
+        // Personnaliser l'apparence des graphiques si nécessaire
         customizeGraph(graph);
     }
-
     private void updateGraph1(GraphView graph, List<SensorData> sensorData) {
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
-        for (int i = 0; i < sensorData.size(); i++) {
-            SensorData measure = sensorData.get(i);
-            series.appendData(new DataPoint(i, measure.getHumidity()), true, sensorData.size());
-        }
 
+        for (int i = 0; i < sensorData.size(); i++) {
+            SensorData mesure = sensorData.get(i);
+            // Utilisez l'indice ou le temps comme X, et la température ou l'humidité comme Y
+            series.appendData(new DataPoint(i, mesure.getHumidity()), true, sensorData.size());
+
+        }
+        // Effacer les séries existantes et ajouter la nouvelle série
         graph.removeAllSeries();
         graph.addSeries(series);
+        // Personnaliser l'apparence des graphiques si nécessaire
         customizeGraph1(graph);
     }
-
-    private void customizeGraph1(GraphView graph) {
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter());
-        graph.setTitle("Graph Humidity");
-        graph.setTitleColor(Color.BLUE);
-    }
-
     private void customizeGraph(GraphView graph) {
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter());
+        // Personnaliser l'apparence des graphiques si nécessaire
+        // ...
+        // Par exemple, personnalisez les labels de l'axe X pour afficher l'heure au format HH:mm:ss
         graph.setTitle("Graph Temperature");
-        graph.setTitleColor(Color.RED);
+
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter());
+    }
+    private void customizeGraph1(GraphView graph) {
+        // Personnaliser l'apparence des graphiques si nécessaire
+        // ...
+        // Par exemple, personnalisez les labels de l'axe X pour afficher l'heure au format HH:mm:ss
+        graph.setTitle("Graph Humidity");
+
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter());
     }
 
     private class DateAsXAxisLabelFormatter extends DefaultLabelFormatter {
-        private final List<Date> sequentialTimeValues;
         private final SimpleDateFormat dateFormat;
 
         public DateAsXAxisLabelFormatter() {
-            sequentialTimeValues = generateSequentialTimeValues(10);
-            dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.FRENCH);
-        }
-
-        private List<Date> generateSequentialTimeValues(int count) {
-            List<Date> timeValues = new ArrayList<>();
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-
-            for (int i = 0; i < count; i++) {
-                calendar.add(Calendar.MINUTE, 1);
-                timeValues.add(calendar.getTime());
-            }
-            return timeValues;
+            dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         }
 
         @Override
-        public String formatLabel(double value, boolean isValueX){
+        public String formatLabel(double value, boolean isValueX) {
             if (isValueX) {
-                int index = (int) value % sequentialTimeValues.size();
-                return dateFormat.format(sequentialTimeValues.get(index));
+                return dateFormat.format(new Date((long) value));
             } else {
                 return super.formatLabel(value, isValueX);
             }
         }
     }
-
-
 }
+

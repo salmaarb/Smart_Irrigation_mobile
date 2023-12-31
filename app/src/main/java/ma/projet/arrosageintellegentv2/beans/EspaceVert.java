@@ -56,5 +56,8 @@ public class EspaceVert {
         this.zones = zones;
     }
 
+    public EspaceVert() {
+    }
+
     private List<Zone> zones;
 }

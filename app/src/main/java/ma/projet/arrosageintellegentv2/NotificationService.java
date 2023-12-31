@@ -97,7 +97,7 @@ public class NotificationService extends Service {
                         if (newTemperatureData != null) {
                             // Check if any new records with temperature > 90
                             for (SensorData newMesure : newTemperatureData) {
-                                if ( newMesure.getTemperature() > 37) {
+                                if ( newMesure.getTemperature() > 100) {
                                     makenotifications(newMesure.getTemperature());
                                     break;
                                 }

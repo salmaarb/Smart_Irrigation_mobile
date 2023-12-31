@@ -71,9 +71,9 @@ public class GrandeurAdapter  extends BaseAdapter {
 
         idG.setText(objects.get(position).getId()+"");
 
-        idGvaleur.setText( objects.get(position).getValeur()+"");
-        idGtype.setText(objects.get(position).getType());
-        idGdate.setText(objects.get(position).getDate());
+        idGvaleur.setText( objects.get(position).getHumidity()+"");
+        idGtype.setText(objects.get(position).getTemperature()+"");
+        idGdate.setText(objects.get(position).getDateTime()+"");
         return convertView;
     }
 

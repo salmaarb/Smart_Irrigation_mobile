@@ -8,6 +8,9 @@ public class Installation {
     private String dateFin;
     private Boitier boitier;
 
+    public Installation() {
+    }
+
     public void setId(long id) {
         this.id = id;
     }

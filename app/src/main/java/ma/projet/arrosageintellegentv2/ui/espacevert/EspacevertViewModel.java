@@ -10,16 +10,20 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ma.projet.arrosageintellegentv2.beans.Arrosage;
+import ma.projet.arrosageintellegentv2.beans.Boitier;
 import ma.projet.arrosageintellegentv2.beans.EspaceVert;
 import ma.projet.arrosageintellegentv2.beans.Grandeur;
 import ma.projet.arrosageintellegentv2.beans.Installation;
 import ma.projet.arrosageintellegentv2.beans.Plantage;
+import ma.projet.arrosageintellegentv2.beans.Plante;
 import ma.projet.arrosageintellegentv2.beans.Zone;
 import ma.projet.arrosageintellegentv2.networking.ApiClient;
 import ma.projet.arrosageintellegentv2.networking.ApiInterface;
@@ -35,6 +39,8 @@ public class EspacevertViewModel extends AndroidViewModel {
     private static final String TAG = "EspaceVertViewModel";
     SharedPreferences sp;
 
+
+
     public EspacevertViewModel(@NonNull Application application) {
         super(application);
     }
@@ -42,41 +48,221 @@ public class EspacevertViewModel extends AndroidViewModel {
     public LiveData<List<EspaceVert>> getEspace() {
         return mEspaceVert;
     }
+    String name = null;String role = null;
 
-
-    void init() {
+    void init() throws JSONException {
         sp = getApplication().getSharedPreferences("login_data", Context.MODE_PRIVATE);
+        String loginData = sp.getString("login_data", "");
 
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
-        String loginData = sp.getString("login_data", "");
         try {
             // Supposez que loginData est au format JSON, ajustez-le en fonction de votre structure
             JSONObject userData = new JSONObject(loginData);
 
-            // Récupérez les informations nécessaires du JSON
+            // Récupérez les informations nécessaires du JSON  String id = userData.getString("id");
+            //            String name = userData.getString("username");
+            //            String role = userData.getString("role");
+            //            String address = userData.optString("address", ""); // Utilisez optString pour gérer les valeurs null
+            //            String phone = userData.optString("phone", ""); // Utilisez optString pour gérer les valeurs null
 
-            String name = userData.getString("username");
+            if (userData.has("user")) {
+                JSONObject userObject = userData.getJSONObject("user");
 
+                if (userObject.has("username")) {
+                    name = userObject.getString("username");
 
+                }
+                if (userObject.has("role")) {
+                    role = userObject.getString("role");
+
+                }
+            }
         Call<List<EspaceVert>> call = apiInterface.getespace(name);
+
 
         call.enqueue(new Callback<List<EspaceVert>>() {
             @Override
             public void onResponse(Call call, Response response) {
                 //Log.d(TAG, "onResponse: " + response);
-                mEspaceVert.setValue((List<EspaceVert>) response.body());
-                Log.d(TAG, "getValeu(à: " + mEspaceVert.getValue());
+                if ("ADMIN".equalsIgnoreCase(role))
+                {
+                    try {
+                        if (userData.has("espacesVerts")) {
+
+                            try {
+
+                                    JSONArray espacesVertsArray = userData.getJSONArray("espacesVerts");
+System.out.println(espacesVertsArray);
+                                // Create a list to store EspaceVert objects
+                                List<EspaceVert> espaceVertList = new ArrayList<>();
+
+                                // Iterate through the array to retrieve each EspaceVert
+                                for (int i = 0; i < espacesVertsArray.length(); i++) {
+                                    JSONObject espaceVertObject = espacesVertsArray.getJSONObject(i);
+
+                                    EspaceVert espaceVert = new EspaceVert();
+                                    espaceVert.setId(espaceVertObject.getInt("id"));
+                                    espaceVert.setLibelle(espaceVertObject.getString("libelle"));
+                                    espaceVert.setImage(espaceVertObject.getString("image"));
+
+                                    // Parse the 'zones' array
+                                    if (espaceVertObject.has("zones")) {
+                                        JSONArray zonesArray = espaceVertObject.getJSONArray("zones");
+
+                                        // Create a list to store Zone objects
+                                        List<Zone> zoneList = new ArrayList<>();
+
+                                        // Iterate through the 'zones' array to retrieve each Zone
+                                        for (int j = 0; j < zonesArray.length(); j++) {
+                                            JSONObject zoneObject = zonesArray.getJSONObject(j);
+
+                                            Zone zone = new Zone();
+                                            zone.setId(zoneObject.getInt("id"));
+                                            zone.setLibelle(zoneObject.getString("libelle"));
+                                            zone.setSuperficie((float) zoneObject.getDouble("superficie"));
+                                            zone.setImage(zoneObject.getString("image"));
+
+                                            // Parse and set Plantages
+                                            if (zoneObject.has("plantages")) {
+                                                JSONArray plantagesArray = zoneObject.getJSONArray("plantages");
+                                                List<Plantage> plantageList = new ArrayList<>();
+
+                                                for (int k = 0; k < plantagesArray.length(); k++) {
+                                                    JSONObject plantageObject = plantagesArray.getJSONObject(k);
+
+                                                    Plantage plantage = new Plantage();
+                                                    plantage.setId(plantageObject.getInt("id"));
+                                                    plantage.setDate(plantageObject.getString("date"));
+                                                    plantage.setNombre(plantageObject.getInt("nombre"));
+
+                                                    // Parse and set Plante
+                                                    JSONObject planteObject = plantageObject.getJSONObject("plante");
+                                                    Plante plante = new Plante();
+                                                    plante.setId(planteObject.getInt("id"));
+                                                    plante.setLibelle(planteObject.getString("libelle"));
+                                                    plante.setImage(planteObject.getString("image"));
+                                                    // Parse and set other properties for Plante
+
+                                                    plantage.setPlante(plante);
+                                                    plantageList.add(plantage);
+                                                }
+
+                                                zone.setPlantages(plantageList);
+                                            }
+                                            if (zoneObject.has("grandeurs")) {
+                                                JSONArray grandeursArray = zoneObject.getJSONArray("grandeurs");
+                                                List<Grandeur> grandeurList = new ArrayList<>();
+
+                                                for (int k = 0; k < grandeursArray.length(); k++) {
+                                                    JSONObject grandeurObject = grandeursArray.getJSONObject(k);
+
+                                                    Grandeur grandeur = new Grandeur();
+                                                    grandeur.setId(grandeurObject.getInt("id"));
+                                                    grandeur.setTemperature((float) grandeurObject.getDouble("temperature"));
+                                                    grandeur.setHumidity((float) grandeurObject.getDouble("humidity"));
+                                                    grandeur.setDateTime(grandeurObject.getString("dateTime"));
+
+                                                    // Add the grandeur to the list
+                                                    grandeurList.add(grandeur);
+                                                }
+
+                                                // Set the list of grandeurs for the current Zone
+                                                zone.setGrandeurs(grandeurList);
+                                            }
+                                            if (zoneObject.has("installations")) {
+                                                JSONArray installationsArray = zoneObject.getJSONArray("installations");
+                                                List<Installation> installationList = new ArrayList<>();
+
+                                                for (int k = 0; k < installationsArray.length(); k++) {
+                                                    JSONObject installationObject = installationsArray.getJSONObject(k);
+
+                                                    Installation installation = new Installation();
+                                                    installation.setId(installationObject.getInt("id"));
+                                                    installation.setDateDebut(installationObject.getString("dateDebut"));
+                                                    installation.setDateFin(installationObject.optString("dateFin", null)); // Use optString to handle null values
+
+                                                    // Parse and set Boitier
+                                                    JSONObject boitierObject = installationObject.getJSONObject("boitier");
+                                                    Boitier boitier = new Boitier();
+                                                    boitier.setId(boitierObject.getInt("id"));
+                                                    boitier.setRef(boitierObject.getString("ref"));
+                                                    boitier.setType(boitierObject.getString("type"));
+                                                    boitier.setCode(boitierObject.getString("code"));
+                                                    boitier.setImage(boitierObject.getString("image"));
+                                                    // Parse and set other properties for Boitier
+
+                                                    installation.setBoitier(boitier);
+                                                    installationList.add(installation);
+                                                }
+
+                                                // Set the list of installations for the current Zone
+                                                zone.setInstallations(installationList);
+                                            }
+                                            // Parse and set Arrosages
+                                            if (zoneObject.has("arrosages")) {
+                                                JSONArray arrosagesArray = zoneObject.getJSONArray("arrosages");
+                                                List<Arrosage> arrosageList = new ArrayList<>();
+
+                                                for (int k = 0; k < arrosagesArray.length(); k++) {
+                                                    JSONObject arrosageObject = arrosagesArray.getJSONObject(k);
+
+                                                    Arrosage arrosage = new Arrosage();
+                                                    arrosage.setId(arrosageObject.getInt("id"));
+                                                    arrosage.setDate(arrosageObject.getString("date"));
+                                                    arrosage.setLitresEau((float) arrosageObject.getDouble("litresEau"));
+                                                    // Parse and set other properties for Arrosage
+
+                                                    arrosageList.add(arrosage);
+                                                }
+
+                                                zone.setArrosages(arrosageList);
+                                            }
+
+                                            // Add the zone to the list
+                                            zoneList.add(zone);
+                                        }
+
+                                        // Set the list of zones for the current EspaceVert
+                                        espaceVert.setZones(zoneList);
+                                    }
+
+                                    // Add the espaceVert to the list
+                                    espaceVertList.add(espaceVert);
+                                }
+                                mEspaceVert.setValue((List<EspaceVert>) espaceVertList);
+
+                                // Now, the espaceVertList contains all EspaceVert objects with nested Zone, Plantage, and Arrosage objects
+                                // You can use espaceVertList as needed
+
+                            } catch (JSONException e) {
+                                e.printStackTrace(); // Handle JSONException
+                            }
+                        }} catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+
+                    System.out.println("salmaa");
+                    Log.d(TAG, "getValeu(à: " + mEspaceVert.getValue());
+
+                }else
+                {
+                    mEspaceVert.setValue((List<EspaceVert>) response.body());
+                    Log.d(TAG, "getValeu(à: " + mEspaceVert.getValue());
+
+                }
+
             }
 
-            @Override
+               @Override
             public void onFailure(Call call, Throwable t) {
                 Log.e(TAG, "onFailure: " + t.getLocalizedMessage());
             }
         });
     } catch (JSONException e) {
-        Log.e(TAG, "Error parsing login data JSON", e);
+            throw new RuntimeException(e);
+        }
     }
-}
 
     public static List<Zone> getZonesByEspaceId(long espace_id) {
         for (EspaceVert e : mEspaceVert.getValue()) {
