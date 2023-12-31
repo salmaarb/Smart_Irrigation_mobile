@@ -59,6 +59,7 @@ public class HomeViewModel extends ViewModel {
                 if (response.isSuccessful() && response.body() != null) {
                     System.out.println("sss");
                     System.out.println(temperatureData);
+
                     temperatureData.setValue(response.body());
                 } else {
                     // Handle errors
@@ -88,16 +89,13 @@ public class HomeViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<List<SensorData>> call, Throwable t) {
-                // Handle errors
             }
         });
     }
 
     public void startRealTimeUpdates() {
-        // Schedule a periodic update for temperature
         executorService.scheduleAtFixedRate(this::fetchDataTemperature, 0, 10, TimeUnit.SECONDS);
 
-        // Schedule a periodic update for humidity
         executorService.scheduleAtFixedRate(this::fetchDataHumidity, 0, 10, TimeUnit.SECONDS);
     }
 }

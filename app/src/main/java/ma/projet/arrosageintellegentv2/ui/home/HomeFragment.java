@@ -38,23 +38,18 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Initialiser le ViewModel
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
-        // Observer les changements dans les données de température
         homeViewModel.getTemperatureData().observe(getViewLifecycleOwner(), new Observer<List<SensorData>>() {
             @Override
             public void onChanged(List<SensorData> sensorData) {
-                // Mettre à jour le graphique de température avec les nouvelles données
                 updateGraph(binding.graphTemperature, sensorData);
             }
         });
 
-        // Observer les changements dans les données d'humidité
         homeViewModel.getHumidityData().observe(getViewLifecycleOwner(), new Observer<List<SensorData>>() {
             @Override
             public void onChanged(List<SensorData> sensorData) {
-                // Mettre à jour le graphique d'humidité avec les nouvelles données
                 updateGraph1(binding.graphHumidity, sensorData);
             }
         });
@@ -71,23 +66,21 @@ public class HomeFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        // Arrêter les mises à jour en temps réel lorsque le fragment n'est pas visible
         homeViewModel.stopRealTimeUpdates();
     }
     private void updateGraph(GraphView graph, List<SensorData> sensorData) {
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
         for (int i = 0; i < sensorData.size(); i++) {
             SensorData mesure = sensorData.get(i);
-            // Utilisez l'indice ou le temps comme X, et la température ou l'humidité comme Y
+            System.out.println(mesure.getDate());
+
             series.appendData(new DataPoint(i, mesure.getTemperature()), true, sensorData.size());
 
         }
         series.setColor(Color.RED);
 
-        // Effacer les séries existantes et ajouter la nouvelle série
         graph.removeAllSeries();
         graph.addSeries(series);
-        // Personnaliser l'apparence des graphiques si nécessaire
         customizeGraph(graph);
     }
     private void updateGraph1(GraphView graph, List<SensorData> sensorData) {
@@ -95,38 +88,31 @@ public class HomeFragment extends Fragment {
 
         for (int i = 0; i < sensorData.size(); i++) {
             SensorData mesure = sensorData.get(i);
-            // Utilisez l'indice ou le temps comme X, et la température ou l'humidité comme Y
             series.appendData(new DataPoint(i, mesure.getHumidity()), true, sensorData.size());
 
         }
-        // Effacer les séries existantes et ajouter la nouvelle série
         graph.removeAllSeries();
         graph.addSeries(series);
-        // Personnaliser l'apparence des graphiques si nécessaire
         customizeGraph1(graph);
     }
     private void customizeGraph(GraphView graph) {
-        // Personnaliser l'apparence des graphiques si nécessaire
-        // ...
-        // Par exemple, personnalisez les labels de l'axe X pour afficher l'heure au format HH:mm:ss
         graph.setTitle("Graph Temperature");
 
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter());
     }
     private void customizeGraph1(GraphView graph) {
-        // Personnaliser l'apparence des graphiques si nécessaire
-        // ...
-        // Par exemple, personnalisez les labels de l'axe X pour afficher l'heure au format HH:mm:ss
+
         graph.setTitle("Graph Humidity");
 
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter());
     }
 
+
     private class DateAsXAxisLabelFormatter extends DefaultLabelFormatter {
         private final SimpleDateFormat dateFormat;
 
         public DateAsXAxisLabelFormatter() {
-            dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+            dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyyy", Locale.getDefault());
         }
 
         @Override

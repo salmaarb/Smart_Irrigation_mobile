@@ -183,7 +183,7 @@ public class GrandeursActivity extends AppCompatActivity {
         private final SimpleDateFormat dateFormat;
 
         public DateAsXAxisLabelFormatter() {
-            dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+            dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyyy", Locale.getDefault());
         }
 
         @Override
