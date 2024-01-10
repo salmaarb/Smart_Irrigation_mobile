@@ -83,11 +83,9 @@ public class GrandeursActivity extends AppCompatActivity {
     private Runnable mUpdateRunnable = new Runnable() {
         @Override
         public void run() {
-            // Répétez le code de mise à jour ici
             fetchDataTemperature();
             fetchDataHumidity();
 
-            // Postez à nouveau le Runnable après l'intervalle d'actualisation
             mHandler.postDelayed(this, UPDATE_INTERVAL);
         }
     };
@@ -103,7 +101,6 @@ public class GrandeursActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
 
                     temperatureData.setValue(response.body());
-                    // Update graph after fetching data
                     updateGraph(graphTemperature, temperatureData.getValue());
                 } else {
                     Log.e(TAG, "Error fetching temperature data");
@@ -127,7 +124,6 @@ public class GrandeursActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     System.out.println(response.body());
                     humidityData.setValue(response.body());
-                    // Update graph after fetching data
                     System.out.println(humidityData.getValue());
                     updateGraph1(graphHumidity, humidityData.getValue());
 
@@ -150,7 +146,7 @@ public class GrandeursActivity extends AppCompatActivity {
                 SensorData mesure = sensorData.get(i);
                 System.out.println("asefergt");
                 System.out.println(mesure.getTemperature());
-                series.appendData(new DataPoint(i, mesure.getTemperature()), true, sensorData.size());
+                series.appendData(new DataPoint(mesure.getDate().getTime(), mesure.getTemperature()), true, sensorData.size());
             }
         }
         series.setColor(Color.RED);
@@ -166,24 +162,36 @@ public class GrandeursActivity extends AppCompatActivity {
                 System.out.println("asefergt");
 
                 System.out.println(mesure.getHumidity());
-                series.appendData(new DataPoint(i, mesure.getHumidity()), true, sensorData.size());
+                series.appendData(new DataPoint(mesure.getDate().getTime(), mesure.getHumidity()), true, sensorData.size());
             }
         }
         series.setColor(Color.BLUE);
         graph.removeAllSeries();
         graph.addSeries(series);
-        customizeGraph(graph);
+        customizeGraph1(graph);
     }
 
     private void customizeGraph(GraphView graph) {
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter());
+        graph.setTitle("Graph Temperature");
+
+      DateAsXAxisLabelFormatter labelFormatter = new DateAsXAxisLabelFormatter();
+        graph.getGridLabelRenderer().setLabelFormatter(labelFormatter);
+        // Ensure the x-axis labels are aligned with the data points
+    }
+    private void customizeGraph1(GraphView graph) {
+
+        graph.setTitle("Graph Humidity");
+
+        DateAsXAxisLabelFormatter labelFormatter = new DateAsXAxisLabelFormatter();
+        graph.getGridLabelRenderer().setLabelFormatter(labelFormatter);
+        // Ensure the x-axis labels are aligned with the data points
     }
 
     private class DateAsXAxisLabelFormatter extends DefaultLabelFormatter {
         private final SimpleDateFormat dateFormat;
 
         public DateAsXAxisLabelFormatter() {
-            dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyyy", Locale.getDefault());
+            dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         }
 
         @Override
@@ -198,7 +206,6 @@ public class GrandeursActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Arrêtez le minuteur lorsqu'il n'est plus nécessaire
         mHandler.removeCallbacks(mUpdateRunnable);
     }
 

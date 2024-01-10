@@ -59,7 +59,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Commencer les mises à jour en temps réel lorsque le fragment est visible
         homeViewModel.startRealTimeUpdates();
     }
 
@@ -74,7 +73,7 @@ public class HomeFragment extends Fragment {
             SensorData mesure = sensorData.get(i);
             System.out.println(mesure.getDate());
 
-            series.appendData(new DataPoint(i, mesure.getTemperature()), true, sensorData.size());
+            series.appendData(new DataPoint(mesure.getDate().getTime(), mesure.getTemperature()), true, sensorData.size());
 
         }
         series.setColor(Color.RED);
@@ -88,7 +87,7 @@ public class HomeFragment extends Fragment {
 
         for (int i = 0; i < sensorData.size(); i++) {
             SensorData mesure = sensorData.get(i);
-            series.appendData(new DataPoint(i, mesure.getHumidity()), true, sensorData.size());
+            series.appendData(new DataPoint(mesure.getDate().getTime(), mesure.getHumidity()), true, sensorData.size());
 
         }
         graph.removeAllSeries();
@@ -98,21 +97,25 @@ public class HomeFragment extends Fragment {
     private void customizeGraph(GraphView graph) {
         graph.setTitle("Graph Temperature");
 
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter());
-    }
+        DateAsXAxisLabelFormatter labelFormatter = new DateAsXAxisLabelFormatter();
+        graph.getGridLabelRenderer().setLabelFormatter(labelFormatter);
+        // Ensure the x-axis labels are aligned with the data points
+         }
     private void customizeGraph1(GraphView graph) {
 
         graph.setTitle("Graph Humidity");
 
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter());
-    }
+        DateAsXAxisLabelFormatter labelFormatter = new DateAsXAxisLabelFormatter();
+        graph.getGridLabelRenderer().setLabelFormatter(labelFormatter);
+        // Ensure the x-axis labels are aligned with the data points
+          }
 
 
     private class DateAsXAxisLabelFormatter extends DefaultLabelFormatter {
         private final SimpleDateFormat dateFormat;
 
         public DateAsXAxisLabelFormatter() {
-            dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyyy", Locale.getDefault());
+            dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         }
 
         @Override

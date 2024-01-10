@@ -41,21 +41,15 @@ public class EspacevertFragement extends Fragment {
 
         binding = FragmentEspacevertBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-      //  String loginData = sp.getString("login_data", "");
 
-
-
-        // instantiate ViewModel
         EspacevertViewModel mEspacevertViewModel = new ViewModelProvider(this).get(EspacevertViewModel.class);
 
-        // reception initial les données
         try {
             mEspacevertViewModel.init();
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
 
-        // instantiate the adapter
         EspaceVertAdapter adapter = new EspaceVertAdapter((StatisticActivity) getActivity());
         list = root.findViewById(R.id.EspacevertList);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -66,7 +60,6 @@ public class EspacevertFragement extends Fragment {
         });
         list.setAdapter(adapter);
 
-        // set Observer of the DataLive (which is products)
         mEspacevertViewModel.getEspace().observe(getActivity(), new Observer<List<EspaceVert>>(){
 
             @Override

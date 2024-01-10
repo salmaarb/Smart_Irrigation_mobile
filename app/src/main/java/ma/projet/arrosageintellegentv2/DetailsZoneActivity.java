@@ -93,7 +93,7 @@ public class DetailsZoneActivity extends AppCompatActivity {
         Log.i(TAG, String.valueOf(zones.getType()));
         id__libelle.setText("Libelle   :"+zones.getLibelle());
         id__superficie.setText("Superficie :"+zones.getSuperficie() );
-        id__type.setText("type   :" +zones.getType() + "");
+        id__type.setText("type   : Sand " );
         Glide.with(this)
                 .load(zones.getImage()) // image url
                 .placeholder(R.drawable.ic_launcher_background) // any placeholder to load at start

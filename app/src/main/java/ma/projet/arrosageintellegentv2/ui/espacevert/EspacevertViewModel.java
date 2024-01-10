@@ -59,11 +59,6 @@ public class EspacevertViewModel extends AndroidViewModel {
             // Supposez que loginData est au format JSON, ajustez-le en fonction de votre structure
             JSONObject userData = new JSONObject(loginData);
 
-            // Récupérez les informations nécessaires du JSON  String id = userData.getString("id");
-            //            String name = userData.getString("username");
-            //            String role = userData.getString("role");
-            //            String address = userData.optString("address", ""); // Utilisez optString pour gérer les valeurs null
-            //            String phone = userData.optString("phone", ""); // Utilisez optString pour gérer les valeurs null
 
             if (userData.has("user")) {
                 JSONObject userObject = userData.getJSONObject("user");
@@ -93,10 +88,8 @@ public class EspacevertViewModel extends AndroidViewModel {
 
                                     JSONArray espacesVertsArray = userData.getJSONArray("espacesVerts");
 System.out.println(espacesVertsArray);
-                                // Create a list to store EspaceVert objects
                                 List<EspaceVert> espaceVertList = new ArrayList<>();
 
-                                // Iterate through the array to retrieve each EspaceVert
                                 for (int i = 0; i < espacesVertsArray.length(); i++) {
                                     JSONObject espaceVertObject = espacesVertsArray.getJSONObject(i);
 
@@ -105,14 +98,11 @@ System.out.println(espacesVertsArray);
                                     espaceVert.setLibelle(espaceVertObject.getString("libelle"));
                                     espaceVert.setImage(espaceVertObject.getString("image"));
 
-                                    // Parse the 'zones' array
                                     if (espaceVertObject.has("zones")) {
                                         JSONArray zonesArray = espaceVertObject.getJSONArray("zones");
 
-                                        // Create a list to store Zone objects
                                         List<Zone> zoneList = new ArrayList<>();
 
-                                        // Iterate through the 'zones' array to retrieve each Zone
                                         for (int j = 0; j < zonesArray.length(); j++) {
                                             JSONObject zoneObject = zonesArray.getJSONObject(j);
 
@@ -166,7 +156,6 @@ System.out.println(espacesVertsArray);
                                                     grandeurList.add(grandeur);
                                                 }
 
-                                                // Set the list of grandeurs for the current Zone
                                                 zone.setGrandeurs(grandeurList);
                                             }
                                             if (zoneObject.has("installations")) {
@@ -195,10 +184,8 @@ System.out.println(espacesVertsArray);
                                                     installationList.add(installation);
                                                 }
 
-                                                // Set the list of installations for the current Zone
                                                 zone.setInstallations(installationList);
                                             }
-                                            // Parse and set Arrosages
                                             if (zoneObject.has("arrosages")) {
                                                 JSONArray arrosagesArray = zoneObject.getJSONArray("arrosages");
                                                 List<Arrosage> arrosageList = new ArrayList<>();
@@ -210,7 +197,6 @@ System.out.println(espacesVertsArray);
                                                     arrosage.setId(arrosageObject.getInt("id"));
                                                     arrosage.setDate(arrosageObject.getString("date"));
                                                     arrosage.setLitresEau((float) arrosageObject.getDouble("litresEau"));
-                                                    // Parse and set other properties for Arrosage
 
                                                     arrosageList.add(arrosage);
                                                 }
@@ -218,21 +204,16 @@ System.out.println(espacesVertsArray);
                                                 zone.setArrosages(arrosageList);
                                             }
 
-                                            // Add the zone to the list
                                             zoneList.add(zone);
                                         }
 
-                                        // Set the list of zones for the current EspaceVert
                                         espaceVert.setZones(zoneList);
                                     }
 
-                                    // Add the espaceVert to the list
                                     espaceVertList.add(espaceVert);
                                 }
                                 mEspaceVert.setValue((List<EspaceVert>) espaceVertList);
 
-                                // Now, the espaceVertList contains all EspaceVert objects with nested Zone, Plantage, and Arrosage objects
-                                // You can use espaceVertList as needed
 
                             } catch (JSONException e) {
                                 e.printStackTrace(); // Handle JSONException

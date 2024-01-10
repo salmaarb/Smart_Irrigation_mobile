@@ -55,23 +55,10 @@ public class ProfileFragment extends Fragment {
         txt_address = view.findViewById(R.id.txt_address);
         txt_phone = view.findViewById(R.id.txt_phone);
 
-        // Obtenez les données de connexion depuis les préférences partagées
         String loginData = sp.getString("login_data", "");
 
-        // Utilisez une bibliothèque JSON (par exemple, Gson) pour désérialiser les données de connexion
-        // Ici, nous supposons que loginData est au format JSON, ajustez-le en fonction de votre structure
-        // Gson gson = new Gson();
-        // AppUser user = gson.fromJson(loginData, AppUser.class);
-
         try {
-            // Supposez que loginData est au format JSON, ajustez-le en fonction de votre structure
             JSONObject userData = new JSONObject(loginData);
-
-            // Récupérez les informations nécessaires du JSON  String id = userData.getString("id");
-            //            String name = userData.getString("username");
-            //            String role = userData.getString("role");
-            //            String address = userData.optString("address", ""); // Utilisez optString pour gérer les valeurs null
-            //            String phone = userData.optString("phone", ""); // Utilisez optString pour gérer les valeurs null
 
             if (userData.has("user")) {
                 JSONObject userObject = userData.getJSONObject("user");
@@ -105,7 +92,6 @@ public class ProfileFragment extends Fragment {
 
                 }
 
-                // Affichez les informations dans les champs correspondants
 
         }
 

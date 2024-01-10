@@ -70,10 +70,8 @@ public class NotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Service started");
 
-        // Implement background processing logic here
         checkDatabaseAndSendNotifications();
 
-        // Return START_STICKY to ensure the service restarts if it's killed by the system
         return START_STICKY;
     }
 
@@ -97,14 +95,12 @@ public class NotificationService extends Service {
                         if (newTemperatureData != null) {
                             // Check if any new records with temperature > 90
                             for (SensorData newMesure : newTemperatureData) {
-                                if ( newMesure.getTemperature() > 100) {
+                                if ( newMesure.getTemperature() > 45) {
                                     makenotifications(newMesure.getTemperature());
                                     break;
                                 }
                             }
 
-                            // Update temperature data
-                           // temperatureData.addAll(newTemperatureData);
                         } else {
                             Log.d(TAG, "newTemperatureData is null");
                         }
@@ -164,7 +160,6 @@ public class NotificationService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // We don't need to bind to this service, so return null
         return null;
     }
 }
