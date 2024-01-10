@@ -1,5 +1,9 @@
 ﻿# smart_watering_mobile
 
+
+https://github.com/salmaarb/Smart_Irrigation_mobile/assets/119877992/b6dd1ec0-1629-483a-9cd8-a04026e8cc2e
+
+
 To import and run the mobile application using Android Studio, follow these steps:
 
 1- Install Android Studio: Download and install the latest version of Android Studio from the official website (https://developer.android.com/studio).
