@@ -81,7 +81,7 @@ public class ZoneAdapter extends BaseAdapter {
                 .with(convertView)
                 .load(objects.get(position).getImage())
                 .centerCrop()
-                .apply(new RequestOptions().override(90, 90))
+                .apply(new RequestOptions().override(100, 100))
                 .into(photo);
         return convertView;
     }

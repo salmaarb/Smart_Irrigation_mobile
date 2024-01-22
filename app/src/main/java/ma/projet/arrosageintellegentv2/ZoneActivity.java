@@ -1,10 +1,14 @@
 package ma.projet.arrosageintellegentv2;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -23,11 +27,37 @@ public class ZoneActivity extends AppCompatActivity {
     private ListView zonelist;
    private  List<Zone>zone=new ArrayList<>();
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.statistic, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // Handle the Up button click
+                onBackPressed();
+                return true;
+
+            case R.id.action_settings:
+                // Handle Settings menu item click
+                return true;
+
+            // Add cases for other menu items as needed
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zone);
         zonelist=findViewById(R.id.zonelist);
         Intent i = getIntent();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         espace_id =  i.getLongExtra("espace_id", -1);
 

@@ -130,6 +130,14 @@ System.out.println(espacesVertsArray);
                                                     Plante plante = new Plante();
                                                     plante.setId(planteObject.getInt("id"));
                                                     plante.setLibelle(planteObject.getString("libelle"));
+                                                    plante.setRacine(planteObject.getString("racine"));
+
+
+
+
+
+
+
                                                     plante.setImage(planteObject.getString("image"));
                                                     // Parse and set other properties for Plante
 

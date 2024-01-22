@@ -21,25 +21,36 @@
         android:theme="@style/Theme.ArrosageIntellegentV2">
         <activity
             android:name=".DetailPlantageActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".PlantageActivity"
+
+    />
         <activity
             android:name=".PlantageActivity"
-       android:exported="false" />
+       android:exported="false"
+            android:parentActivityName=".DetailsZoneActivity"
+            />
         <activity
             android:name=".InstallationsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".DetailsZoneActivity"/>
         <activity
             android:name=".GrandeursActivity"
-            android:exported="false" />
+            android:exported="false" android:parentActivityName=".DetailsZoneActivity"/>
         <activity
             android:name=".ArrosageActivity"
-            android:exported="false" />
+            android:exported="false" android:parentActivityName=".DetailsZoneActivity" />
         <activity
             android:name=".DetailsZoneActivity"
-            android:exported="false" />
+            android:exported="false" android:parentActivityName=".ZoneActivity" />
         <activity
             android:name=".ZoneActivity"
-            android:exported="false" />
+            android:exported="false">
+    <meta-data
+        android:name="android.app.shortcuts"
+        android:resource="@menu/activity_main_drawer" />
+
+    </activity>
         <activity
             android:name=".StatisticActivity"
             android:exported="false"

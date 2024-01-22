@@ -5,11 +5,15 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.MutableLiveData;
@@ -48,10 +52,36 @@ public class GrandeursActivity extends AppCompatActivity {
     GraphView graphHumidity;
     private final MutableLiveData<List<SensorData>> temperatureData = new MutableLiveData<>();
     private final MutableLiveData<List<SensorData>> humidityData = new MutableLiveData<>();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.statistic, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // Handle the Up button click
+                onBackPressed();
+                return true;
 
+            case R.id.action_settings:
+                // Handle Settings menu item click
+                return true;
+
+            // Add cases for other menu items as needed
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         setContentView(R.layout.activity_grandeurs);
         mHandler.postDelayed(mUpdateRunnable, UPDATE_INTERVAL);
         graphTemperature = findViewById(R.id.graphTemperature);

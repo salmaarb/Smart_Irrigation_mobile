@@ -2,14 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
+android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
 
-    <ListView
-        android:id="@+id/zonelist"
+
+
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+
+        android:orientation="vertical"
+        android:fillViewport="true"
+        android:padding="10dp">
+
+        <ListView
+            android:id="@+id/zonelist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <!-- Your ListView content here -->
+
+        </ListView>
+
+    </ScrollView>
+
 </LinearLayout>

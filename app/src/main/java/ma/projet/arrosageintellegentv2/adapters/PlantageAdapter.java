@@ -70,7 +70,7 @@ public class PlantageAdapter extends BaseAdapter {
 
         idP.setText(objects.get(position).getId()+"");
         idPnombre.setText( objects.get(position).getNombre()+"");
-        idPplante.setText(objects.get(position).getPlante()+"");
+        idPplante.setText(objects.get(position).getPlante().getLibelle()+"");
         idPDate.setText(objects.get(position).getDate());
         return convertView;
     }
